@@ -1,27 +1,12 @@
-
 workflows:
   android-build:
     name: Build FocusFilter APK
     environment:
       java: 17
     scripts:
-      - name: Unpack project
+      - name: Unpack and build
         script: |
           tar -xf FocusFilter_v4.tar.gz-5.tar
-      - name: Fix Gradle and AGP versions
-        script: |
-          cd FocusFilter
-          # Downgrade Android Gradle Plugin to 8.2.0
-          sed -i 's/classpath "com.android.tools.build:gradle:.*"/classpath "com.android.tools.build:gradle:8.2.0"/' build.gradle
-          # Force Gradle wrapper to use 8.7
-          mkdir -p gradle/wrapper
-          echo "distributionUrl=https\\://services.gradle.org/distributions/gradle-8.7-bin.zip" > gradle/wrapper/gradle-wrapper.properties
-          echo "distributionBase=GRADLE_USER_HOME" >> gradle/wrapper/gradle-wrapper.properties
-          echo "distributionPath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
-          echo "zipStoreBase=GRADLE_USER_HOME" >> gradle/wrapper/gradle-wrapper.properties
-          echo "zipStorePath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
-      - name: Build APK
-        script: |
           cd FocusFilter
           chmod +x gradlew
           ./gradlew assembleDebug --stacktrace
