@@ -4,7 +4,13 @@ workflows:
     environment:
       java: 17
     scripts:
-      - name: Clean and build
+      - name: Use specific Gradle version
+        script: |
+          wget https://services.gradle.org/distributions/gradle-8.7-bin.zip
+          unzip -q gradle-8.7-bin.zip
+          export PATH=$PWD/gradle-8.7/bin:$PATH
+          gradle --version
+      - name: Unpack and build
         script: |
           tar -xf FocusFilter_v4.tar.gz-5.tar
           cd FocusFilter
