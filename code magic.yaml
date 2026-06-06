@@ -4,18 +4,27 @@ workflows:
     environment:
       java: 17
     scripts:
-      - name: Unpack project
+      - name: Unpack and debug
         script: |
           tar -xf FocusFilter_v4.tar.gz-5
+          echo "=== Current directory contents ==="
           ls -la
+          echo "=== Looking for project folders ==="
+          find . -type d -name "*app*" -o -name "*build.gradle*" | head -20
       - name: Generate Gradle Wrapper
         script: |
-          cd FocusFilter
+          # Try to find the right folder
+          if [ -d "FocusFilter" ]; then
+            cd FocusFilter
+          elif [ -d "app" ]; then
+            echo "Already in project root"
+          else
+            cd $(find . -type d -name "app" | head -1 | xargs dirname)
+          fi
           gradle wrapper
           chmod +x gradlew
       - name: Build APK
         script: |
-          cd FocusFilter
           ./gradlew assembleDebug --stacktrace
     artifacts:
-      - FocusFilter/app/build/outputs/apk/debug/*.apk
+      - app/build/outputs/apk/debug/*.apk
