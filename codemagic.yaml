@@ -1,0 +1,12 @@
+workflows:
+  android-build:
+    name: Build FocusFilter APK
+    environment:
+      java: 17
+    scripts:
+      - name: Build APK
+        script: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace
+    artifacts:
+      - app/build/outputs/apk/debug/*.apk
