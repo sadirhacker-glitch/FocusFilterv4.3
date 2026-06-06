@@ -1,31 +1,29 @@
+
 workflows:
   android-build:
     name: Build FocusFilter APK
     environment:
       java: 17
     scripts:
-      - name: Use specific Gradle version
-        script: |
-          wget https://services.gradle.org/distributions/gradle-8.7-bin.zip
-          unzip -q gradle-8.7-bin.zip
-          export PATH=$PWD/gradle-8.7/bin:$PATH
-          gradle --version
       - name: Unpack project
         script: |
           tar -xf FocusFilter_v4.tar.gz-5.tar
-      - name: Remove ONNX Runtime (temporary)
+      - name: Fix Gradle and AGP versions
         script: |
           cd FocusFilter
-          # Comment out ONNX dependency
-          sed -i '' '/onnxruntime-android/s/^/\/\//' app/build.gradle
-          # Comment out ONNX imports in code (if any)
-          find . -name "*.kt" -exec sed -i '' '/onnxruntime/s/^/\/\//' {} \;
+          # Downgrade Android Gradle Plugin to 8.2.0
+          sed -i 's/classpath "com.android.tools.build:gradle:.*"/classpath "com.android.tools.build:gradle:8.2.0"/' build.gradle
+          # Force Gradle wrapper to use 8.7
+          mkdir -p gradle/wrapper
+          echo "distributionUrl=https\\://services.gradle.org/distributions/gradle-8.7-bin.zip" > gradle/wrapper/gradle-wrapper.properties
+          echo "distributionBase=GRADLE_USER_HOME" >> gradle/wrapper/gradle-wrapper.properties
+          echo "distributionPath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
+          echo "zipStoreBase=GRADLE_USER_HOME" >> gradle/wrapper/gradle-wrapper.properties
+          echo "zipStorePath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
       - name: Build APK
         script: |
           cd FocusFilter
-          gradle wrapper
           chmod +x gradlew
-          ./gradlew clean
           ./gradlew assembleDebug --stacktrace
     artifacts:
       - FocusFilter/app/build/outputs/apk/debug/*.apk
