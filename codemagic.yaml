@@ -10,13 +10,28 @@ workflows:
           unzip -q gradle-8.7-bin.zip
           export PATH=$PWD/gradle-8.7/bin:$PATH
           gradle --version
-      - name: Unpack and build with full logging
+      - name: Unpack project
         script: |
           tar -xf FocusFilter_v4.tar.gz-5.tar
+      - name: Patch build.gradle for ONNX
+        script: |
+          cd FocusFilter
+          # Add ABI splits to app/build.gradle
+          sed -i '/android {/a\
+          \    splits {\
+          \        abi {\
+          \            enable true\
+          \            reset()\
+          \            include "arm64-v8a", "armeabi-v7a", "x86", "x86_64"\
+          \            universalApk true\
+          \        }\
+          \    }' app/build.gradle
+      - name: Build APK
+        script: |
           cd FocusFilter
           gradle wrapper
           chmod +x gradlew
           ./gradlew clean
-          ./gradlew assembleDebug --stacktrace --info
+          ./gradlew assembleDebug --stacktrace
     artifacts:
       - FocusFilter/app/build/outputs/apk/debug/*.apk
