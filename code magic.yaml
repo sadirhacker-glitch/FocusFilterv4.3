@@ -4,12 +4,18 @@ workflows:
     environment:
       java: 17
     scripts:
+      - name: Unpack project
+        script: |
+          tar -xf FocusFilter_v4.tar.gz-5
+          ls -la
       - name: Generate Gradle Wrapper
         script: |
+          cd FocusFilter
           gradle wrapper
           chmod +x gradlew
       - name: Build APK
         script: |
+          cd FocusFilter
           ./gradlew assembleDebug --stacktrace
     artifacts:
-      - app/build/outputs/apk/debug/*.apk
+      - FocusFilter/app/build/outputs/apk/debug/*.apk
