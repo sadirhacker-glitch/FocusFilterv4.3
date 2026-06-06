@@ -10,13 +10,13 @@ workflows:
           unzip -q gradle-8.7-bin.zip
           export PATH=$PWD/gradle-8.7/bin:$PATH
           gradle --version
-      - name: Unpack and build
+      - name: Unpack and build with full logging
         script: |
           tar -xf FocusFilter_v4.tar.gz-5.tar
           cd FocusFilter
           gradle wrapper
           chmod +x gradlew
           ./gradlew clean
-          ./gradlew assembleDebug --stacktrace
+          ./gradlew assembleDebug --stacktrace --info
     artifacts:
       - FocusFilter/app/build/outputs/apk/debug/*.apk
