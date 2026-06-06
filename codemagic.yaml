@@ -7,16 +7,15 @@ workflows:
       - name: Unpack project
         script: |
           tar -xf FocusFilter_v4.tar.gz-5.tar
-          ls -la   # show what we have
       - name: Generate Gradle wrapper
         script: |
           cd FocusFilter
           gradle wrapper
           chmod +x gradlew
-          ls -la gradlew   # verify it exists
-      - name: Build APK
+      - name: Clean and build with info
         script: |
           cd FocusFilter
-          ./gradlew assembleDebug --stacktrace
+          ./gradlew clean
+          ./gradlew assembleDebug --stacktrace --info
     artifacts:
       - FocusFilter/app/build/outputs/apk/debug/*.apk
