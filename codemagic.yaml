@@ -13,6 +13,13 @@ workflows:
       - name: Unpack project
         script: |
           tar -xf FocusFilter_v4.tar.gz-5.tar
+      - name: Remove ONNX Runtime (temporary)
+        script: |
+          cd FocusFilter
+          # Comment out ONNX dependency
+          sed -i '' '/onnxruntime-android/s/^/\/\//' app/build.gradle
+          # Comment out ONNX imports in code (if any)
+          find . -name "*.kt" -exec sed -i '' '/onnxruntime/s/^/\/\//' {} \;
       - name: Build APK
         script: |
           cd FocusFilter
