@@ -12,10 +12,12 @@ workflows:
           cd FocusFilter
           gradle wrapper
           chmod +x gradlew
-      - name: Clean and build with info
+      - name: Build with full log
         script: |
           cd FocusFilter
           ./gradlew clean
-          ./gradlew assembleDebug --stacktrace --info
+          ./gradlew assembleDebug --stacktrace --info > build_log.txt 2>&1
+          cat build_log.txt
     artifacts:
+      - FocusFilter/build_log.txt
       - FocusFilter/app/build/outputs/apk/debug/*.apk
