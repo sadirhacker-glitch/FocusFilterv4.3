@@ -1,15 +1,32 @@
 workflows:
   android-build:
-    name: Build FocusFilter APK
+    name: Debug FocusFilter
     environment:
       java: 17
     scripts:
-      - name: Unpack and build
+      - name: List files before unpack
         script: |
-          tar -xf FocusFilter_v4.tar.gz-5
-          cd FocusFilter
-          gradle wrapper
-          chmod +x gradlew
-          ./gradlew assembleDebug --stacktrace
+          echo "=== Files in clone directory ==="
+          ls -la
+          echo "=== Looking for archive ==="
+          find . -name "*.tar*" -o -name "*.gz*"
+      - name: Try to unpack
+        script: |
+          # Try different archive names
+          if [ -f "FocusFilter_v4.tar.gz-5" ]; then
+            tar -xvf FocusFilter_v4.tar.gz-5
+          elif [ -f "FocusFilter_v4.tar.gz" ]; then
+            tar -xzvf FocusFilter_v4.tar.gz
+          elif [ -f "FocusFilter_v4.tar" ]; then
+            tar -xvf FocusFilter_v4.tar
+          else
+            echo "No archive found!"
+            ls -la
+            exit 1
+          fi
+          echo "=== After unpack ==="
+          ls -la
+          echo "=== Looking for project files ==="
+          find . -name "build.gradle" -o -name "settings.gradle"
     artifacts:
-      - FocusFilter/app/build/outputs/apk/debug/*.apk
+      - dummy.txt
