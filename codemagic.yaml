@@ -13,19 +13,6 @@ workflows:
       - name: Unpack project
         script: |
           tar -xf FocusFilter_v4.tar.gz-5.tar
-      - name: Patch build.gradle for ONNX
-        script: |
-          cd FocusFilter
-          # Add ABI splits to app/build.gradle
-          sed -i '/android {/a\
-          \    splits {\
-          \        abi {\
-          \            enable true\
-          \            reset()\
-          \            include "arm64-v8a", "armeabi-v7a", "x86", "x86_64"\
-          \            universalApk true\
-          \        }\
-          \    }' app/build.gradle
       - name: Build APK
         script: |
           cd FocusFilter
